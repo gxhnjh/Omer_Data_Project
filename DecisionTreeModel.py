@@ -28,3 +28,14 @@ dt.fit(X_train, y_train)
 
 dt_pred = dt.predict(X_test)
 dt_prob = dt.predict_proba(X_test)[:, 1]
+
+print("\n" + "="*45)
+print("  Decision Tree — Evaluation Metrics")
+print("="*45)
+print(f"  Accuracy  : {accuracy_score(y_test, dt_pred):.4f}")
+print(f"  Precision : {precision_score(y_test, dt_pred):.4f}")
+print(f"  Recall    : {recall_score(y_test, dt_pred):.4f}")
+print(f"  F1-Score  : {f1_score(y_test, dt_pred):.4f}")
+print(f"  ROC-AUC   : {roc_auc_score(y_test, dt_prob):.4f}")
+print("\nFull Classification Report:")
+print(classification_report(y_test, dt_pred, target_names=['No CVD', 'CVD']))
