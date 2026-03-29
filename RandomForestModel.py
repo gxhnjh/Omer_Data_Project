@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (accuracy_score, precision_score, recall_score,
                               f1_score, roc_auc_score, confusion_matrix,
                               ConfusionMatrixDisplay, classification_report)
@@ -24,50 +24,42 @@ print(f"Test size  : {X_test.shape[0]}")
 print(f"Train class balance: {y_train.value_counts().to_dict()}")
 print(f"Test class balance : {y_test.value_counts().to_dict()}")
 
-dt = DecisionTreeClassifier(random_state=42)
-dt.fit(X_train, y_train)
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
 
-
-dt_pred = dt.predict(X_test)
-dt_prob = dt.predict_proba(X_test)[:, 1]
-
-dt = DecisionTreeClassifier(random_state=42)
-dt.fit(X_train, y_train)
-
-
-dt_pred = dt.predict(X_test)
-dt_prob = dt.predict_proba(X_test)[:, 1]
+rf_pred = rf.predict(X_test)
+rf_prob = rf.predict_proba(X_test)[:, 1]
 
 
 print("\n" + "=" * 45)
-print("  Decision Tree — Evaluation Metrics")
+print("  Random Forest — Evaluation Metrics")
 print("=" * 45)
-print(f"  Accuracy  : {accuracy_score(y_test, dt_pred):.4f}")
-print(f"  Precision : {precision_score(y_test, dt_pred):.4f}")
-print(f"  Recall    : {recall_score(y_test, dt_pred):.4f}")
-print(f"  F1-Score  : {f1_score(y_test, dt_pred):.4f}")
-print(f"  ROC-AUC   : {roc_auc_score(y_test, dt_prob):.4f}")
+print(f"  Accuracy  : {accuracy_score(y_test, rf_pred):.4f}")
+print(f"  Precision : {precision_score(y_test, rf_pred):.4f}")
+print(f"  Recall    : {recall_score(y_test, rf_pred):.4f}")
+print(f"  F1-Score  : {f1_score(y_test, rf_pred):.4f}")
+print(f"  ROC-AUC   : {roc_auc_score(y_test, rf_prob):.4f}")
 print("\nFull Classification Report:")
-print(classification_report(y_test, dt_pred, target_names=['No CVD', 'CVD']))
+print(classification_report(y_test, rf_pred, target_names=['No CVD', 'CVD']))
 
 fig, ax = plt.subplots(figsize=(6, 5))
 ConfusionMatrixDisplay(
-    confusion_matrix(y_test, dt_pred),
+    confusion_matrix(y_test, rf_pred),
     display_labels=['No CVD', 'CVD']
 ).plot(ax=ax, colorbar=False)
-ax.set_title('Decision Tree — Confusion Matrix')
+ax.set_title('Random Forest — Confusion Matrix')
 plt.tight_layout()
-plt.savefig('dt_confusion_matrix.png', dpi=150)
+plt.savefig('rf_confusion_matrix.png', dpi=150)
 plt.show()
-print("Saved: dt_confusion_matrix.png")
+print("Saved: rf_confusion_matrix.png")
 
-importances = dt.feature_importances_
+importances = rf.feature_importances_
 idx = np.argsort(importances)
 fig, ax = plt.subplots(figsize=(8, 6))
-ax.barh(X.columns[idx], importances[idx], color='steelblue')
-ax.set_title('Decision Tree — Feature Importances')
+ax.barh(X.columns[idx], importances[idx], color='forestgreen')
+ax.set_title('Random Forest — Feature Importances')
 ax.set_xlabel('Importance')
 plt.tight_layout()
-plt.savefig('dt_feature_importances.png', dpi=150)
+plt.savefig('rf_feature_importances.png', dpi=150)
 plt.show()
-print("Saved: dt_feature_importances.png")
+print("Saved: rf_feature_importances.png")
